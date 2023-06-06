@@ -3,25 +3,34 @@ server:
 
 spring:
   application:
-    name: gateway
+    name: apigatewayservice
+  security:
+    oauth2:
+      client:
+        provider:
+          api-keycloak-provider:
+            issuer-uri: http://localhost:8080/realms/DigitalHouse
+        registration:
+          api-gateway-service:
+            provider: api-keycloak-provider
+            client-id: fda-gateway
+            client-secret: 51XXY31JuYxnd9l73AiT6nJUgo1X6aYX
+            scope: openid
+            authorization-grant-type: authorization_code
+            redirect-uri=http: //localhost:8080/login/oauth2/code/keycloak
   cloud:    
     gateway:      
       discovery:
         locator:
           enabled: true
+      default-filters:
+        - TokenRelay
       routes:
         - id: mscatalog
           uri: lb://api-catalog
           predicates:
             - Path=/api/v1/catalog/**
-        - id: msmovie
-          uri: lb://api-movie
-          predicates:
-            - Path=/api/v1/movies/**
-        - id: msserie
-          uri: lb://serie-service
-          predicates:
-            - Path=/api/v1/series/**
+
         
 info:
   app:
